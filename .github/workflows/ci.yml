@@ -1,0 +1,32 @@
+name: Python CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Run Python tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download repository
+        uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
+        with:
+          version: "0.11.29"
+          enable-cache: true
+
+      - name: Install Python
+        run: uv python install
+
+      - name: Install project dependencies
+        run: uv sync --locked --dev
+
+      - name: Run tests
+        run: uv run pytest -v
