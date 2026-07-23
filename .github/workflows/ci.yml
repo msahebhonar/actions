@@ -39,6 +39,18 @@ jobs:
           echo "Commit: $COMMIT_SHA"
           echo "Runner OS: $RUNNER_OS"
 
+      - name: Pull request path
+        if: ${{ github.event_name == 'pull_request' }}
+        run: echo "Running for a pull request"
+
+      - name: Main branch push path
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        run: echo "Running after a push to main"
+
+      - name: Manual path
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: echo "Running because someone started the workflow manually"
+
       - name: Download repository
         uses: actions/checkout@v7
 
