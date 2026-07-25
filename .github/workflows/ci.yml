@@ -18,13 +18,14 @@ permissions:
   contents: read
 
 env:
-  PYTHON_VERSION: "3.13"
+  PYTHON_VERSION: ${{ vars.CI_PYTHON_VERSION }} # repository-level environment variable
+  # PYTHON_VERSION: "3.13" # workflow-level environment variables
 
 jobs:
   quality:
     name: Check code quality
     runs-on: ubuntu-latest
-    env:
+    env: # job-level environment variables
       CHECK_TARGET: "."
 
     steps:
@@ -66,7 +67,7 @@ jobs:
           enable-cache: true
 
       - name: Demonstrate step-level override
-        env:
+        env: # step-level environment variables
             PYTHON_VERSION: "demo_override"
         run:
             echo "Overriding $PYTHON_VERSION for this step"
