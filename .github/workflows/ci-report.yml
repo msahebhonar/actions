@@ -1,4 +1,4 @@
-name: Assignment
+name: Report CI
 on:
   push:
   workflow_dispatch:
