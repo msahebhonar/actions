@@ -1,0 +1,24 @@
+name: Assignment
+on:
+  push:
+  workflow_dispatch:
+  
+permissions:
+    contents: read
+
+jobs:
+  report:
+    name: Report event
+    runs-on: ubuntu-latest
+    
+    steps:
+        - name: Report selected event
+          if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }} 
+          env:
+            EVENT_NAME: ${{ github.event_name }}
+            PYTHON_VERSION: ${{ vars.CI_PYTHON_VERSION }}
+          run: |
+            echo "Event name: $EVENT_NAME"
+            echo "Python version: $PYTHON_VERSION"
+  
+    
