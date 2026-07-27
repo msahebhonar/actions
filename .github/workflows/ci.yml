@@ -27,6 +27,8 @@ jobs:
     runs-on: ubuntu-latest
     env: # job-level environment variables
       CHECK_TARGET: "."
+    outputs:
+      checked_target: ${{ steps.publish_result.outputs.checked_target }}
 
     steps:
       - name: Show runtime information
@@ -83,12 +85,21 @@ jobs:
       - name: Check code quality
         run: uv run ruff check "$CHECK_TARGET"
 
+      - name: Publish quality result
+        id: publish_result
+        run: echo "checked_target=$CHECK_TARGET" >> $GITHUB_OUTPUT
+
   test:
     name: Run Python tests
     needs: quality
     runs-on: ubuntu-latest
 
     steps:
+      - name: Read quality job output
+        env:
+          CHECKED_TARGET: ${{ needs.quality.outputs.checked_target }}
+        run: echo "Quality job checked $CHECKED_TARGET"
+
       - name: Download repository
         uses: actions/checkout@v7
 
