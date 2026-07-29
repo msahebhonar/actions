@@ -91,15 +91,9 @@ jobs:
 
   test:
     name: Run Python tests
-    needs: quality
     runs-on: ubuntu-latest
 
     steps:
-      - name: Read quality job output
-        env:
-          CHECKED_TARGET: ${{ needs.quality.outputs.checked_target }}
-        run: echo "Quality job checked $CHECKED_TARGET"
-
       - name: Download repository
         uses: actions/checkout@v7
 
@@ -117,3 +111,4 @@ jobs:
 
       - name: Run tests
         run: uv run pytest -v
+
