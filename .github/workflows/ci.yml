@@ -91,15 +91,9 @@ jobs:
 
   test:
     name: Run Python tests
-    needs: quality
     runs-on: ubuntu-latest
 
     steps:
-      - name: Read quality job output
-        env:
-          CHECKED_TARGET: ${{ needs.quality.outputs.checked_target }}
-        run: echo "Quality job checked $CHECKED_TARGET"
-
       - name: Download repository
         uses: actions/checkout@v7
 
@@ -117,3 +111,29 @@ jobs:
 
       - name: Run tests
         run: uv run pytest -v
+
+  package:
+    name: Create source package
+    needs:
+      - quality
+      - test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download repository
+        uses: actions/checkout@v7
+
+      - name: Create source package
+        id: create_package
+        env:
+          CHECKED_TARGET: ${{ needs.quality.outputs.checked_target }}
+          ARCHIVE_NAME: calulator-${{ github.run_number }}.tar.gz
+        run: |
+          tar -czf "$ARCHIVE_NAME" main.py pyproject.toml uv.lock
+          echo "Created $ARCHIVE_NAME" after checking $CHECKED_TARGET
+          echo "archive_name=$ARCHIVE_NAME" >> $GITHUB_OUTPUT
+          
+      - name: Show package
+        env:
+          ARCHIVE_NAME: ${{ steps.create_package.outputs.archive_name }}
+        run: ls -lh "$ARCHIVE_NAME"
