@@ -137,3 +137,23 @@ jobs:
         env:
           ARCHIVE_NAME: ${{ steps.create_package.outputs.archive_name }}
         run: ls -lh "$ARCHIVE_NAME"
+
+  summary:
+    name: "Pipeline Summary"
+    if: ${{ always() }}
+    needs:
+      - quality
+      - test
+      - package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Show job results
+        env:
+          QUALITY_RESULT: ${{ needs.quality.result }}
+          TEST_RESULT: ${{ needs.test.result}}
+          PACKAGE_RESULT: ${{ needs.package.result }}
+        run: |
+          echo "Quality: $QUALITY_RESULT"
+          echo "Test: $TEST_RESULT"
+          echo "Package: $PACKAGE_RESULT"
